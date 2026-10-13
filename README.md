@@ -1,9 +1,13 @@
-# Pokémon Reloaded on Android
+# Pokémon Reloaded on Android — English launcher
 
-Run **Pokémon Reloaded** on Android without a Windows emulator in the way. This is the English
-edition of the community port originally maintained by [@Klisee](https://github.com/Klisee); the
-upstream project lives at
-[Klisee/pokemon-reloaded-android](https://github.com/Klisee/pokemon-reloaded-android).
+Run **Pokémon Reloaded** on Android without a Windows emulator in the way.
+
+> **This fork is a straight English translation of the app launcher, nothing more.** Every text
+> label, tooltip, dialog, and message in the launcher UI has been translated from Spanish to English.
+> **No functionality has been changed** — the engine, game behaviour, and features are identical to
+> the original. All the real work is by [@Klisee](https://github.com/Klisee); the upstream project
+> lives at [Klisee/pokemon-reloaded-android](https://github.com/Klisee/pokemon-reloaded-android).
+> The game itself still runs in its original language — only the launcher around it is in English.
 
 ## What this actually is
 

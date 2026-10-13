@@ -36,7 +36,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.Val.PokeReloaded.en"
+        applicationId = "com.klisee.reloaded"
         minSdk = 29
         targetSdk = 36
         versionCode = 6

@@ -1,114 +1,117 @@
-# Pokémon Reloaded en Android
+# Pokémon Reloaded on Android
 
-Ejecuta **Pokémon Reloaded** en Android sin emulador de Windows de por medio. Lo mantiene
-[@Klisee](https://github.com/Klisee), para la comunidad.
+Run **Pokémon Reloaded** on Android without a Windows emulator in the way. This is the English
+edition of the community port originally maintained by [@Klisee](https://github.com/Klisee); the
+upstream project lives at
+[Klisee/pokemon-reloaded-android](https://github.com/Klisee/pokemon-reloaded-android).
 
-## Qué es esto, en realidad
+## What this actually is
 
-Lo de "port" es un decir, y conviene aclararlo. Pokémon Reloaded es un juego hecho en Game Maker 8
-para Windows, y aquí **no se ha reescrito ni recompilado nada**. Lo que hace esta app es
-**ejecutar el juego original tal cual**, con sus archivos intactos, sobre
-[OpenGMK](https://github.com/OpenGMK/OpenGMK): una reimplementación nativa en Rust del motor de
-Game Maker 8.
+Calling it a "port" is a bit of a stretch, and it's worth clarifying. Pokémon Reloaded is a game made
+in Game Maker 8 for Windows, and **nothing here has been rewritten or recompiled**. What this app
+does is **run the original game as-is**, with its files untouched, on top of
+[OpenGMK](https://github.com/OpenGMK/OpenGMK): a native Rust reimplementation of the Game Maker 8
+engine.
 
-Dicho de otro modo: no hay Wine, no hay Windows emulado, no hay capa de traducción. El motor está
-escrito para Android y compilado para el móvil, así que el juego corre prácticamente como un nativo.
-Lo único que se ha "porteado" son las tripas del motor, no el juego.
+In other words: there's no Wine, no emulated Windows, no translation layer. The engine is written for
+Android and compiled for the phone, so the game runs practically like a native app. The only thing
+that's been "ported" is the engine's internals, not the game.
 
-La app sí aporta todo lo de fuera del juego: importar el juego desde un `.zip`, controles táctiles,
-ajustes, gestión de partidas y logs. El juego en sí no se toca.
+The app does provide everything around the game: importing the game from a `.zip`, touch controls,
+settings, save management, and logs. The game itself is left untouched.
 
-## Cómo funciona
+## How it works
 
-- **Importar.** Le das a Importar y eliges el `.zip` del juego. La app lo descomprime en su propio
-  almacenamiento privado, así que no depende de permisos de almacenamiento ni de dónde lo tengas
-  guardado.
-- **Ejecutar.** El motor (OpenGMK, en Rust) se carga como librería nativa y arranca el runner de
-  Game Maker 8 sobre los datos del juego. El render va por OpenGL ES y el audio por AAudio.
-- **Controles.** La capa táctil no es fija: cambia según el estado del juego, así que en el mapa
-  tienes una cruceta y en los menús otra cosa. Cada botón pulsa una tecla del juego, y puedes
-  reasignar cualquiera desde Ajustes → Mando → Controles. También funciona un mando real, detectado solo.
-- **Partidas.** Se leen y escriben en la carpeta del juego. Desde Ajustes → Partidas puedes verlas,
-  exportarlas, importarlas, borrarlas y mover una de una ranura a otra. Si jugabas en PC, tu partida
-  entra por aquí.
-- **Salir y volver.** Al mandar la app a segundo plano, el bucle se detiene y el audio se corta de
-  verdad; al volver, sigue donde estaba en vez de quedarse en negro.
-- **Logs.** Si algo va mal, la app escribe un log y lo puedes compartir como archivo de texto desde
-  Ajustes → Logs, sin perderlo al reiniciar el móvil.
+- **Import.** Tap Import and choose the game's `.zip`. The app unpacks it into its own private
+  storage, so it doesn't depend on storage permissions or where you keep the file.
+- **Run.** The engine (OpenGMK, in Rust) loads as a native library and starts the Game Maker 8 runner
+  on the game's data. Rendering goes through OpenGL ES and audio through AAudio.
+- **Controls.** The touch layer isn't fixed: it changes with the game's state, so on the map you get a
+  d-pad and in menus something else. Each button presses a game key, and you can remap any of them in
+  Settings → Controller → Controls. A real controller also works, detected automatically.
+- **Saves.** They're read and written in the game's folder. From Settings → Saves you can view them,
+  export, import, delete, and move one from one slot to another. If you played on PC, your save comes
+  in here.
+- **Leave and return.** When the app goes to the background, the loop stops and the audio really cuts
+  out; when you come back, it picks up where it was instead of going black.
+- **Logs.** If something goes wrong, the app writes a log and you can share it as a text file from
+  Settings → Logs, without losing it when the phone restarts.
 
-## Cómo está montado
+## How it's put together
 
 ```mermaid
 flowchart TB
     subgraph app["App · Kotlin + Compose"]
-        launcher["Lanzador e interfaz"]
-        ajustes["Ajustes · partidas · logs"]
-        overlay["Controles táctiles"]
+        launcher["Launcher and UI"]
+        ajustes["Settings · saves · logs"]
+        overlay["Touch controls"]
     end
 
-    subgraph engine["Motor · Rust (OpenGMK)"]
-        runner["Runner de Game Maker 8"]
-        render["Render OpenGL ES"]
+    subgraph engine["Engine · Rust (OpenGMK)"]
+        runner["Game Maker 8 runner"]
+        render["OpenGL ES rendering"]
         audio["Audio (AAudio)"]
     end
 
-    juego["Datos del juego original (tu .zip)"]
+    juego["Original game data (your .zip)"]
 
-    launcher -->|importa el .zip| juego
+    launcher -->|imports the .zip| juego
     app <-->|JNI| engine
-    engine -->|lee y ejecuta| juego
+    engine -->|reads and runs| juego
 ```
 
-La app y el motor son dos mundos separados que hablan por JNI. El motor no sabe de Android ni de
-interfaz: solo sabe ejecutar el juego. La app no sabe de Game Maker: solo lo lanza y lo envuelve.
-Esa separación es la que permite tocar la interfaz sin romper el motor, y viceversa.
+The app and the engine are two separate worlds that talk over JNI. The engine knows nothing about
+Android or the UI: it only knows how to run the game. The app knows nothing about Game Maker: it just
+launches and wraps it. That separation is what lets you touch the UI without breaking the engine, and
+vice versa.
 
-## Qué necesitas
+## What you need
 
-Los archivos originales del juego, que están en el blog de **F3R**:
+The original game files, which are on **F3R**'s blog:
 [pokemon-reloaded.blogspot.com](https://pokemon-reloaded.blogspot.com/)
 
-El repo no incluye ningún asset del juego, y eso es justo lo que lo mantiene limpio.
+The repo doesn't include any game assets, and that's exactly what keeps it clean.
 
-## Cómo se usa
+## How to use it
 
-1. Instala el APK de la última release.
-2. Consigue el juego en un `.zip` y dale a **Importar** (o usa **Descargar** para abrir el blog).
-3. **Jugar**. Si ya tenías partida en el PC, tráela desde Ajustes → Partidas.
+1. Install the APK from the latest release.
+2. Get the game as a `.zip` and tap **Import** (or use **Download** to open the blog).
+3. **Play**. If you already had a save on PC, bring it in from Settings → Saves.
 
-## Estado
+## Status
 
-Está en beta y se nota: puede petar. Si algo falla, guarda un log desde Ajustes → Logs y ábrelo como
-issue.
+It's in beta and it shows: it can crash. If something fails, save a log from Settings → Logs and open
+it as an issue.
 
-Lo que ahora mismo da problemas, y resolvere despues:
+What's currently giving trouble, to be resolved later:
 
-- **El escalado en combate.** El juego cambia la escala por su cuenta y la cámara se vuelve loca.
-- **El movimiento Vuelo.** En combate no llega a conectar y el Pokémon se queda cayendo.
+- **Battle scaling.** The game changes the scale on its own and the camera goes haywire.
+- **The Fly move.** In battle it doesn't connect and the Pokémon keeps falling.
 
-Y por ir haciendo, sin orden:
+And a loose to-do list, in no order:
 
-- Pulir el escalado del combate hasta que se comporte.
-- Más ajustes de rendimiento en móviles modestos.
-- Revisar la compatibilidad con mandos de todo tipo.
+- Polish battle scaling until it behaves.
+- More performance tuning on modest phones.
+- Review compatibility with all kinds of controllers.
 
-## Compilar
+## Building
 
 ```
-# El motor (Rust) y su .so para Android
+# The engine (Rust) and its .so for Android
 cd src/OpenGMK
 cargo ndk -t arm64-v8a --platform 29 build -p gm8emulator --release
 
-# La app
+# The app
 cd ../../android
 ./build.sh :app:assembleRelease
 ```
 
-## Créditos
+## Credits
 
-- **Pokémon Reloaded** es obra de **F3R Productions**: [el blog del juego](https://pokemon-reloaded.blogspot.com/)
-- **OpenGMK**, la reimplementación del motor sin la que esto no existiría: [github.com/OpenGMK/OpenGMK](https://github.com/OpenGMK/OpenGMK)
-- **Google Sans Flex**, la tipografía de la app
+- **Pokémon Reloaded** is the work of **F3R Productions**: [the game's blog](https://pokemon-reloaded.blogspot.com/)
+- **OpenGMK**, the engine reimplementation without which this wouldn't exist: [github.com/OpenGMK/OpenGMK](https://github.com/OpenGMK/OpenGMK)
+- **Original Android port** by [@Klisee](https://github.com/Klisee): [Klisee/pokemon-reloaded-android](https://github.com/Klisee/pokemon-reloaded-android)
+- **Google Sans Flex**, the app's typeface
 
-Pokémon es una marca de Nintendo, Game Freak y Creatures. Este proyecto no está afiliado ni
-respaldado por ellos.
+Pokémon is a trademark of Nintendo, Game Freak, and Creatures. This project is not affiliated with or
+endorsed by them.

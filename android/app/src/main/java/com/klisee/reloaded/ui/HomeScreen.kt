@@ -111,7 +111,7 @@ fun HomeScreen(
             busy = false
             progress = null
             status = repo.status()
-            snackbar.showSnackbar(result.fold({ "Juego instalado." }, { it.message ?: "No pude importar el juego." }))
+            snackbar.showSnackbar(result.fold({ "Game installed." }, { it.message ?: "Couldn't import the game." }))
         }
     }
 
@@ -127,7 +127,7 @@ fun HomeScreen(
                 title = { Text("Pokemon Reloaded", style = MaterialTheme.typography.titleLarge) },
                 actions = {
                     IconButton(onClick = onLog) { Icon(Icons.Filled.Article, contentDescription = "Logs") }
-                    IconButton(onClick = onSettings) { Icon(Icons.Filled.Settings, contentDescription = "Ajustes") }
+                    IconButton(onClick = onSettings) { Icon(Icons.Filled.Settings, contentDescription = "Settings") }
                 },
             )
         },
@@ -146,16 +146,16 @@ fun HomeScreen(
                     loadingPost -> NewsPlaceholder()
                     post != null -> NewsFeed(post!!)
                     !networkGranted -> NoticeCard(
-                        text = "La app necesita permiso de red para leer las novedades del blog y descargar el juego.",
-                        action = "Conceder permiso",
+                        text = "The app needs network access to read blog updates and download the game.",
+                        action = "Grant access",
                         onAction = onRequestNetwork,
                     )
                     blogError != null -> NoticeCard(
-                        text = "No pude leer el blog: $blogError",
-                        action = "Reintentar",
+                        text = "Couldn't load the blog: $blogError",
+                        action = "Retry",
                         onAction = { blogAttempt++ },
                     )
-                    else -> NoticeCard(text = "El blog no devolvio ninguna entrada.", action = "Reintentar", onAction = { blogAttempt++ })
+                    else -> NoticeCard(text = "The blog returned no posts.", action = "Retry", onAction = { blogAttempt++ })
                 }
             }
 
@@ -177,11 +177,11 @@ fun HomeScreen(
                             Icon(Icons.Filled.PlayArrow, contentDescription = null, modifier = Modifier.size(28.dp))
                         }
                         Spacer(Modifier.width(12.dp))
-                        Text(if (launching) "Cargando..." else "Jugar", style = MaterialTheme.typography.titleLarge)
+                        Text(if (launching) "Loading..." else "Play", style = MaterialTheme.typography.titleLarge)
                     }
                     if (installed == null) {
                         Text(
-                            text = "Para jugar hace falta el juego: descargalo del blog o importa el zip que ya tengas.",
+                            text = "You need the game to play. Download it from the blog or import a ZIP you already have.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
@@ -196,7 +196,7 @@ fun HomeScreen(
                         ) {
                             Icon(Icons.Filled.Download, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text(if (postVersion != null) "Descargar $postVersion" else "Descargar")
+                            Text(if (postVersion != null) "Download $postVersion" else "Download")
                         }
                         TextButton(
                             onClick = { picker.launch(arrayOf("application/zip", "application/octet-stream", "*/*")) },
@@ -205,7 +205,7 @@ fun HomeScreen(
                         ) {
                             Icon(Icons.Filled.FolderOpen, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Importar")
+                            Text("Import")
                         }
                     }
                     // The bar hovers over the page, so the surface has to reach the bottom edge for
@@ -242,7 +242,7 @@ private fun ImportPanel(busy: Boolean, progress: Int?) {
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 Text(
-                    text = if (progress == null) "Preparando el archivo…" else "Instalando el juego…",
+                    text = if (progress == null) "Preparing file..." else "Installing game...",
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                 )
@@ -269,7 +269,7 @@ private fun NewsFeed(post: Blog.Post) {
                     java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).parse(post.published)?.time ?: 0L
                 }.getOrDefault(0L)
                 Text(
-                    text = "Publicado el ${formatDate(millis)}",
+                    text = "Published on ${formatDate(millis)}",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -303,7 +303,7 @@ private fun NewsFeed(post: Blog.Post) {
                 onClick = { openInBrowser(context, post.postUrl) },
                 modifier = Modifier.padding(horizontal = 16.dp),
             ) {
-                Text("Leer la entrada completa")
+                Text("Read the full post")
             }
         }
     }

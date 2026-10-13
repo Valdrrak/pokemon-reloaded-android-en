@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Pokemon Reloaded</string>
-    <string name="play">Jugar</string>
-    <string name="import_game">Importar juego</string>
-    <string name="log">Registro</string>
-    <string name="about">Acerca de</string>
+    <string name="app_name">Pokemon Reloaded (EN)</string>
+    <string name="play">Play</string>
+    <string name="import_game">Import game</string>
+    <string name="log">Logs</string>
+    <string name="about">About</string>
 </resources>

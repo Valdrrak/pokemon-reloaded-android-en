@@ -31,14 +31,14 @@ import java.util.Date
 
 /** Human-readable size, e.g. "324 MB". */
 fun formatBytes(bytes: Long): String = when {
-    bytes <= 0 -> "sin datos"
+    bytes <= 0 -> "No data"
     bytes >= 1L shl 30 -> "%.1f GB".format(bytes / (1L shl 30).toDouble())
     bytes >= 1L shl 20 -> "%.0f MB".format(bytes / (1L shl 20).toDouble())
     else -> "%.0f KB".format(bytes / 1024.0)
 }
 
 fun formatDate(millis: Long): String =
-    if (millis <= 0) "sin datos" else DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(millis))
+    if (millis <= 0) "No data" else DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(millis))
 
 /**
  * Opens a link in whatever browser the device has. Downloading is handed to the browser on purpose:

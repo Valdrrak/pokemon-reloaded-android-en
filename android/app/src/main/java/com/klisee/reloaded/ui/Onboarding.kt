@@ -73,14 +73,14 @@ fun OnboardingScaffold(
                     Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
                         if (onBack != null) {
                             FilledTonalIconButton(onClick = onBack) {
-                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Atras")
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
                             }
                         }
                     }
                     Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                         if (step > 0) {
                             Text(
-                                text = "PASO $step DE ${stepCount - 1}",
+                                text = "STEP $step OF ${stepCount - 1}",
                                 style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.sp),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )

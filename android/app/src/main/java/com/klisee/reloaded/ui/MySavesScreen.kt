@@ -76,7 +76,7 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
         scope.launch {
             val result = withContext(Dispatchers.IO) { repo.deleteSlot(index) }
             snackbar.showSnackbar(
-                result.fold({ "Partida $index borrada." }, { "No pude borrar: ${it.message}" }),
+                result.fold({ "Save $index deleted." }, { "Couldn't delete: ${it.message}" }),
             )
             if (result.isSuccess) {
                 // Empty the card the moment the save is gone, rather than waiting for the re-read:
@@ -93,13 +93,13 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
         AlertDialog(
             onDismissRequest = { askFirst = null },
             icon = { Icon(Icons.Filled.Delete, contentDescription = null) },
-            title = { Text("Borrar la partida") },
-            text = { Text("¿Estas seguro de que quieres borrar tu partida?") },
+            title = { Text("Delete save") },
+            text = { Text("Are you sure you want to delete your save?") },
             confirmButton = {
                 TextButton(onClick = {
                     askFirst = null
                     askSecond = index
-                }) { Text("Si") }
+                }) { Text("Yes") }
             },
             dismissButton = { TextButton(onClick = { askFirst = null }) { Text("No") } },
         )
@@ -109,16 +109,16 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
         AlertDialog(
             onDismissRequest = { askSecond = null },
             icon = { Icon(Icons.Filled.Warning, contentDescription = null) },
-            title = { Text("ADVERTENCIA") },
+            title = { Text("WARNING") },
             text = {
                 Text(
-                    "ESTAS A PUNTO DE BORRAR TU PARTIDA PARA SIEMPRE, ¿ESTAS SEGURO DE QUE ESTAS " +
-                        "HACIENDO? SI BORRAS TU PARTIDA SE PERDERA PARA SIEMPRE (ESO ES MUCHO TIEMPO) " +
-                        "a no ser que tengas una copia de seguridad.",
+                    "YOU ARE ABOUT TO DELETE YOUR SAVE FOREVER. ARE YOU SURE ABOUT THIS? IF YOU " +
+                        "DELETE YOUR SAVE IT WILL BE LOST FOREVER (THAT'S A LONG TIME) unless you " +
+                        "have a backup.",
                 )
             },
-            confirmButton = { TextButton(onClick = { deleteSlot(index) }) { Text("Estoy seguro") } },
-            dismissButton = { TextButton(onClick = { askSecond = null }) { Text("Mejor no") } },
+            confirmButton = { TextButton(onClick = { deleteSlot(index) }) { Text("I'm sure") } },
+            dismissButton = { TextButton(onClick = { askSecond = null }) { Text("Better not") } },
         )
     }
 
@@ -132,18 +132,18 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
         if (uri == null || index == null) return@rememberLauncherForActivityResult
         scope.launch {
             val file = repo.exportSlot(index).getOrElse {
-                snackbar.showSnackbar("No pude exportar: ${it.message}")
+                snackbar.showSnackbar("Couldn't export: ${it.message}")
                 return@launch
             }
             val copied = withContext(Dispatchers.IO) {
                 runCatching {
                     context.contentResolver.openOutputStream(uri)?.use { out ->
                         file.inputStream().use { it.copyTo(out) }
-                    } ?: error("No pude abrir el destino.")
+                    } ?: error("Couldn't open the destination.")
                 }
             }
             file.delete()
-            snackbar.showSnackbar(if (copied.isSuccess) "Partida $index exportada." else "No pude guardar el archivo.")
+            snackbar.showSnackbar(if (copied.isSuccess) "Save $index exported." else "Couldn't save the file.")
         }
     }
 
@@ -155,8 +155,8 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
             val result = withContext(Dispatchers.IO) { repo.importSlot(uri, index) }
             snackbar.showSnackbar(
                 result.fold(
-                    { "Partida importada en el Slot $index." },
-                    { "No pude importar: ${it.message}" },
+                    { "Save imported into slot $index." },
+                    { "Couldn't import: ${it.message}" },
                 ),
             )
             revision++
@@ -167,18 +167,18 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
         if (uri == null) return@rememberLauncherForActivityResult
         scope.launch {
             val file = repo.exportSaves().getOrElse {
-                snackbar.showSnackbar("No pude exportar: ${it.message}")
+                snackbar.showSnackbar("Couldn't export: ${it.message}")
                 return@launch
             }
             val copied = withContext(Dispatchers.IO) {
                 runCatching {
                     context.contentResolver.openOutputStream(uri)?.use { out ->
                         file.inputStream().use { it.copyTo(out) }
-                    } ?: error("No pude abrir el destino.")
+                    } ?: error("Couldn't open the destination.")
                 }
             }
             file.delete()
-            snackbar.showSnackbar(if (copied.isSuccess) "Todo exportado." else "No pude guardar el archivo.")
+            snackbar.showSnackbar(if (copied.isSuccess) "Everything exported." else "Couldn't save the file.")
         }
     }
 
@@ -186,7 +186,7 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
         if (uri == null) return@rememberLauncherForActivityResult
         scope.launch {
             val result = withContext(Dispatchers.IO) { repo.importSaves(uri) }
-            snackbar.showSnackbar(result.fold({ "Partidas, equipos y personajes restaurados." }, { "No pude importar: ${it.message}" }))
+            snackbar.showSnackbar(result.fold({ "Saves, teams, and characters restored." }, { "Couldn't import: ${it.message}" }))
             revision++
         }
     }
@@ -194,9 +194,9 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mis partidas") },
+                title = { Text("My saves") },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver") }
+                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
                 },
             )
         },
@@ -209,7 +209,7 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
         ) {
             val list = slots
             if (list == null) {
-                Text("Leyendo las partidas...", style = MaterialTheme.typography.bodyMedium)
+                Text("Reading saves...", style = MaterialTheme.typography.bodyMedium)
                 return@Column
             }
 
@@ -236,11 +236,11 @@ fun MySavesScreen(repo: GameRepository, onBack: () -> Unit) {
                 TextButton(
                     onClick = { saveAll.launch("partidas-reloaded.zip") },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Exportar todas las partidas") }
+                ) { Text("Export all saves") }
                 TextButton(
                     onClick = { restoreEverything.launch(arrayOf("application/zip", "application/octet-stream", "*/*")) },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Importar todas las partidas") }
+                ) { Text("Import all saves") }
             }
 
             Spacer(Modifier.height(BottomNavSpace))
@@ -288,7 +288,7 @@ private fun SaveSlotCard(
                     IconButton(onClick = onDelete) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = "Borrar la partida",
+                            contentDescription = "Delete save",
                             tint = MaterialTheme.colorScheme.error,
                         )
                     }
@@ -299,16 +299,16 @@ private fun SaveSlotCard(
 
             if (!filled) {
                 Text(
-                    text = "Ranura vacia",
+                    text = "Empty slot",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
                 Text(slot.name.orEmpty(), style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.height(8.dp))
-                Text("Vistos: ${slot.seen ?: "?"}", style = MaterialTheme.typography.bodyLarge)
-                Text("Capturados: ${slot.caught ?: "?"}", style = MaterialTheme.typography.bodyLarge)
-                Text("Localizacion: ${slot.place ?: "?"}", style = MaterialTheme.typography.bodyLarge)
+                Text("Seen: ${slot.seen ?: "?"}", style = MaterialTheme.typography.bodyLarge)
+                Text("Caught: ${slot.caught ?: "?"}", style = MaterialTheme.typography.bodyLarge)
+                Text("Location: ${slot.place ?: "?"}", style = MaterialTheme.typography.bodyLarge)
             }
 
             Spacer(Modifier.height(8.dp))
@@ -317,12 +317,12 @@ private fun SaveSlotCard(
                 TextButton(onClick = onExport, enabled = filled) {
                     Icon(Icons.Filled.FileDownload, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.size(8.dp))
-                    Text("Exportar partida")
+                    Text("Export save")
                 }
                 TextButton(onClick = onImport) {
                     Icon(Icons.Filled.FileUpload, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.size(8.dp))
-                    Text("Importar partida")
+                    Text("Import save")
                 }
             }
         }

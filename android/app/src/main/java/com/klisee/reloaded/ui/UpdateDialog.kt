@@ -39,7 +39,7 @@ fun UpdateDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Filled.SystemUpdate, contentDescription = null) },
-        title = { Text(if (busy) "Descargando actualizacion" else "Hay una version nueva") },
+        title = { Text(if (busy) "Downloading update" else "A new version is available") },
         text = {
             Column {
                 Text("Version ${release.version}")
@@ -53,7 +53,7 @@ fun UpdateDialog(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            text = "${inMegabytes(written)} de ${if (total > 0) inMegabytes(total) else "?"} MB",
+                            text = "${inMegabytes(written)} of ${if (total > 0) inMegabytes(total) else "?"} MB",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -66,7 +66,7 @@ fun UpdateDialog(
                 }
                 if (problem == null && !busy) {
                     Text(
-                        text = "Se descarga y se instala sola, sin pasar por el navegador. Android te pedira permiso la primera vez.",
+                        text = "It downloads and installs itself, without going through the browser. Android will ask for permission the first time.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -81,7 +81,7 @@ fun UpdateDialog(
                 }
                 TextButton(onClick = onOpenReleases, modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "No confio en el autoactualizador",
+                        text = "I don't trust the auto-updater",
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
@@ -89,13 +89,13 @@ fun UpdateDialog(
         },
         confirmButton = {
             TextButton(onClick = onDownload, enabled = !busy) {
-                Text(if (busy) "Descargando..." else "Descargar")
+                Text(if (busy) "Downloading..." else "Download")
             }
         },
         dismissButton = {
             // "Ocultar" while it works, "Cancelar" while it waits: the same thing to the user, but
             // it says what it does at each moment.
-            TextButton(onClick = onDismiss, enabled = !busy) { Text(if (busy) "Ocultar" else "Cancelar") }
+            TextButton(onClick = onDismiss, enabled = !busy) { Text(if (busy) "Hide" else "Cancel") }
         },
     )
 }

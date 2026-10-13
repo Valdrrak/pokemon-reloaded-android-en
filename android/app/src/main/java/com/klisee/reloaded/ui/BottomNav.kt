@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.dp
 
 /** The three places the app has. */
 enum class Tab(val label: String, val icon: ImageVector, val selectedIcon: ImageVector) {
-    Home("Inicio", Icons.Outlined.Home, Icons.Filled.Home),
+    Home("Home", Icons.Outlined.Home, Icons.Filled.Home),
     Log("Logs", Icons.Outlined.Description, Icons.Filled.Description),
-    Settings("Ajustes", Icons.Outlined.Settings, Icons.Filled.Settings),
+    Settings("Settings", Icons.Outlined.Settings, Icons.Filled.Settings),
 }
 
 /**

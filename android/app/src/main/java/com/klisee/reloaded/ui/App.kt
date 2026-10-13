@@ -138,7 +138,7 @@ fun App(repo: GameRepository, prefs: Preferences) {
                         if (file == null) {
                             // It used to fail in silence and open the browser, which looked exactly
                             // like nothing happening. Now it says so.
-                            problem = "No pude descargar la actualizacion: ${result.exceptionOrNull()?.message}"
+                            problem = "Couldn't download the update: ${result.exceptionOrNull()?.message}"
                         } else {
                             problem = installUpdate(context, file)
                             if (problem == null) update = null

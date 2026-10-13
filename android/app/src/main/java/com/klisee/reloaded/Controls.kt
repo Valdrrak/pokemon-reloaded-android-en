@@ -42,10 +42,10 @@ enum class ControlAction(val key: String, val defaultCode: Int) {
 /** What the key does in the game, for the ones that are known. */
 val ControlAction.hint: String
     get() = when (this) {
-        ControlAction.Z -> "Interactuar y confirmar"
-        ControlAction.X -> "Cancelar y correr"
-        ControlAction.O -> "Mochila"
-        ControlAction.E -> "Escapar de un Pokemon salvaje"
+        ControlAction.Z -> "Interact and confirm"
+        ControlAction.X -> "Cancel and run"
+        ControlAction.O -> "Bag"
+        ControlAction.E -> "Escape from a wild Pokemon"
         else -> ""
     }
 
@@ -59,11 +59,11 @@ fun buttonName(code: Int): String = when (code) {
     103 -> "R1"
     104 -> "L2"
     105 -> "R2"
-    106 -> "Stick izquierdo"
-    107 -> "Stick derecho"
+    106 -> "Left stick"
+    107 -> "Right stick"
     108 -> "Start"
     109 -> "Select"
-    else -> "Boton $code"
+    else -> "Button $code"
 }
 
 /**
@@ -74,7 +74,7 @@ fun buttonName(code: Int): String = when (code) {
  */
 fun writeControlsFile(filesDir: File, bindings: Map<ControlAction, Int>, stick: Boolean, padConnected: Boolean) {
     val text = buildString {
-        appendLine("# Escrito por la pantalla de Controles. El emulador lo lee al arrancar.")
+        appendLine("# Written by the Controls screen. The emulator reads it at startup.")
         for (action in ControlAction.entries) {
             bindings[action]?.let { appendLine("$it=${action.key}") }
         }

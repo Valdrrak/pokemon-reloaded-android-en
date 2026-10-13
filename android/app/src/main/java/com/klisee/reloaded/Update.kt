@@ -51,7 +51,7 @@ object Update {
             val code = connection.responseCode
             val total = connection.contentLengthLong
             trace("update: descarga $code, $total bytes desde $url")
-            if (code !in 200..299) error("La descarga respondio $code.")
+            if (code !in 200..299) error("The download responded $code.")
             connection.inputStream.use { input ->
                 target.outputStream().use { output ->
                     val buffer = ByteArray(64 * 1024)
@@ -101,7 +101,7 @@ object Update {
     private fun get(url: String): String {
         val connection = open(url)
         connection.connect()
-        if (connection.responseCode !in 200..299) error("GitHub respondio ${connection.responseCode}.")
+        if (connection.responseCode !in 200..299) error("GitHub responded ${connection.responseCode}.")
         return connection.inputStream.bufferedReader().use { it.readText() }
     }
 }
@@ -121,8 +121,8 @@ fun installUpdate(context: android.content.Context, apk: File): String? {
                     .setData(android.net.Uri.parse("package:${context.packageName}"))
                     .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
             )
-            "Activa \"Permitir desde esta fuente\" y vuelve a darle a Descargar."
-        }.getOrElse { "Android no deja instalar desde esta app: ${it.message}" }
+            "Turn on \"Allow from this source\" and tap Download again."
+        }.getOrElse { "Android won't allow installing from this app: ${it.message}" }
     }
     return runCatching {
         val uri = androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.updates", apk)
@@ -131,5 +131,5 @@ fun installUpdate(context: android.content.Context, apk: File): String? {
             .addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
         null
-    }.getOrElse { "No pude abrir el instalador: ${it::class.java.simpleName}: ${it.message}" }
+    }.getOrElse { "Couldn't open the installer: ${it::class.java.simpleName}: ${it.message}" }
 }

@@ -81,8 +81,8 @@ fun SettingsScreen(
     if (confirmingDelete) {
         AlertDialog(
             onDismissRequest = { confirmingDelete = false },
-            title = { Text("Borrar el juego?") },
-            text = { Text("Se borra la copia extraida (${formatBytes(installed?.sizeBytes ?: 0)}). Podras volver a descargarlo o importarlo, pero tus partidas guardadas se pierden.") },
+            title = { Text("Delete the game?") },
+            text = { Text("This removes the extracted copy (${formatBytes(installed?.sizeBytes ?: 0)}). You can download or import it again, but your saved games will be lost.") },
             confirmButton = {
                 TextButton(onClick = {
                     confirmingDelete = false
@@ -90,14 +90,14 @@ fun SettingsScreen(
                         repo.deleteGame()
                         status = repo.status()
                     }
-                }) { Text("Borrar") }
+                }) { Text("Delete") }
             },
-            dismissButton = { TextButton(onClick = { confirmingDelete = false }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { confirmingDelete = false }) { Text("Cancel") } },
         )
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Ajustes") }) },
+        topBar = { TopAppBar(title = { Text("Settings") }) },
         bottomBar = bottomBar,
         // Lifted clear of the floating bar, which otherwise sits on top of the message.
         snackbarHost = { SnackbarHost(snackbar, modifier = Modifier.padding(bottom = BottomNavSpace)) },
@@ -109,23 +109,23 @@ fun SettingsScreen(
         ) {
             Spacer(Modifier.height(4.dp))
 
-            SettingsGroup("Juego") {
+            SettingsGroup("Game") {
                 if (installed == null) {
                     InfoRow(
                         icon = Icons.Filled.Info,
-                        title = "Sin juego instalado",
-                        value = "Descargalo o importalo desde la pantalla principal",
+                        title = "No game installed",
+                        value = "Download or import it from the home screen",
                         items = 1,
                         index = 0,
                     )
                 } else {
-                    InfoRow(Icons.Filled.VideogameAsset, "Version", installed.version ?: "sin datos", items = 4, index = 0)
-                    InfoRow(Icons.Filled.Storage, "Tamano en disco", formatBytes(installed.sizeBytes), items = 4, index = 1)
-                    InfoRow(Icons.Filled.CalendarMonth, "Instalado el", formatDate(installed.installedAt), items = 4, index = 2)
+                    InfoRow(Icons.Filled.VideogameAsset, "Version", installed.version ?: "No data", items = 4, index = 0)
+                    InfoRow(Icons.Filled.Storage, "Size on disk", formatBytes(installed.sizeBytes), items = 4, index = 1)
+                    InfoRow(Icons.Filled.CalendarMonth, "Installed", formatDate(installed.installedAt), items = 4, index = 2)
                     NavRow(
                         icon = Icons.Filled.Delete,
-                        title = "Borrar el juego",
-                        subtitle = "Libera ${formatBytes(installed.sizeBytes)} del almacenamiento",
+                        title = "Delete game",
+                        subtitle = "Free up ${formatBytes(installed.sizeBytes)} of storage",
                         items = 4,
                         index = 3,
                         onClick = { confirmingDelete = true },
@@ -133,14 +133,14 @@ fun SettingsScreen(
                 }
             }
 
-            SettingsGroup("Partidas") {
+            SettingsGroup("Saves") {
                 NavRow(
                     icon = Icons.Filled.Save,
-                    title = "Mis partidas",
+                    title = "My saves",
                     subtitle = if (installed == null) {
-                        "El juego no esta descargado"
+                        "The game is not installed"
                     } else {
-                        "Ve cuales partidas tienes guardadas en el juego"
+                        "View the saves stored in the game"
                     },
                     items = 1,
                     index = 0,
@@ -149,22 +149,22 @@ fun SettingsScreen(
                 )
             }
 
-            SettingsGroup("Mando") {
+            SettingsGroup("Controller") {
                 NavRow(
                     icon = Icons.Filled.SportsEsports,
-                    title = "Controles",
-                    subtitle = "Elige que boton del mando hace cada tecla, y pruebalo",
+                    title = "Controls",
+                    subtitle = "Choose which controller button maps to each key, and test it",
                     items = 1,
                     index = 0,
                     onClick = onControls,
                 )
             }
 
-            SettingsGroup("Resolucion") {
+            SettingsGroup("Display") {
                 ChoiceRow(
                     icon = Icons.Filled.Fullscreen,
-                    title = "Rellenar la pantalla",
-                    subtitle = "La imagen ocupa todo el movil, aunque se deforme un poco",
+                    title = "Fill the screen",
+                    subtitle = "Fill the entire screen, even if the image is stretched",
                     selected = !keepAspect,
                     items = 2,
                     index = 0,
@@ -176,8 +176,8 @@ fun SettingsScreen(
                 )
                 ChoiceRow(
                     icon = Icons.Filled.AspectRatio,
-                    title = "Mantener la proporcion",
-                    subtitle = "El aspecto clasico del PC, con bandas oscuras a los lados",
+                    title = "Keep aspect ratio",
+                    subtitle = "Use the classic PC proportions, with dark bars on the sides",
                     selected = keepAspect,
                     items = 2,
                     index = 1,
@@ -189,11 +189,11 @@ fun SettingsScreen(
                 )
             }
 
-            SettingsGroup("Pantalla") {
+            SettingsGroup("Screen") {
                 SwitchRow(
                     icon = Icons.Filled.LightMode,
-                    title = "Mantener la pantalla encendida",
-                    subtitle = "Evita que el movil se bloquee mientras juegas",
+                    title = "Keep screen on",
+                    subtitle = "Prevent your phone from locking while you play",
                     checked = keepScreenOn,
                     items = 1,
                     index = 0,
@@ -204,11 +204,11 @@ fun SettingsScreen(
                 )
             }
 
-            SettingsGroup("Actualizaciones") {
+            SettingsGroup("Updates") {
                 NavRow(
                     icon = Icons.Filled.SystemUpdate,
-                    title = "Version de la app: $appVersion",
-                    subtitle = "Checa si hay alguna actualizacion disponible de la aplicacion",
+                    title = "App version: $appVersion",
+                    subtitle = "Check for available updates",
                     items = 1,
                     index = 0,
                     enabled = !checking,
@@ -220,26 +220,26 @@ fun SettingsScreen(
                             if (found != null) {
                                 onUpdateFound(found)
                             } else {
-                                snackbar.showSnackbar("Ya tienes la ultima version ($appVersion).")
+                                snackbar.showSnackbar("No updates are available for this build ($appVersion).")
                             }
                         }
                     },
                 )
             }
 
-            SettingsGroup("Ayuda") {
+            SettingsGroup("Help") {
                 NavRow(
                     icon = Icons.Filled.Article,
                     title = "Logs",
-                    subtitle = "En caso de un error, comparte los logs, me ayudarán a saber qué falló",
+                    subtitle = "Share the logs if something goes wrong; they can help diagnose the problem",
                     items = 2,
                     index = 0,
                     onClick = onLog,
                 )
                 NavRow(
                     icon = Icons.Filled.Info,
-                    title = "Acerca de",
-                    subtitle = "Version, creditos y aviso",
+                    title = "About",
+                    subtitle = "Version, credits, and notices",
                     items = 2,
                     index = 1,
                     onClick = onAbout,

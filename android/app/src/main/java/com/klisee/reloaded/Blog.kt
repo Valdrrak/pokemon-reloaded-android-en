@@ -35,7 +35,7 @@ object Blog {
             if (attempt > 0) delay(700L * attempt)
             runCatching { fetch() }.onSuccess { return@withContext Result.success(it) }.onFailure { last = it }
         }
-        Result.failure(last ?: IllegalStateException("No pude consultar el blog."))
+        Result.failure(last ?: IllegalStateException("Couldn't reach the blog."))
     }
 
     private fun fetch(): Post {
@@ -45,7 +45,7 @@ object Blog {
             setRequestProperty("User-Agent", "ReloadedLauncher/1.0")
         }
         connection.connect()
-        if (connection.responseCode !in 200..299) error("El blog respondio ${connection.responseCode}.")
+        if (connection.responseCode !in 200..299) error("The blog responded ${connection.responseCode}.")
         val body = connection.inputStream.bufferedReader().use { it.readText() }
         return parse(body)
     }

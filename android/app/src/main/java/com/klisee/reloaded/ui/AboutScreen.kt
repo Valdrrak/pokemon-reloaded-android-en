@@ -32,9 +32,9 @@ fun AboutScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Acerca de") },
+                title = { Text("About") },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver") }
+                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
                 },
             )
         },
@@ -51,24 +51,24 @@ fun AboutScreen(onBack: () -> Unit) {
                 modifier = Modifier.padding(horizontal = 4.dp),
             )
             Text(
-                text = "Port no oficial para Android del fangame, hecho con OpenGMK. No emula Windows: lee los datos del juego y los ejecuta directamente.",
+                text = "Unofficial Android port of the fangame, built with OpenGMK. It doesn't emulate Windows: it reads the game's data and runs it directly.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 4.dp),
             )
 
-            SettingsGroup("Quien lo hizo") {
-                InfoRow(Icons.Filled.Person, "El juego", "Fer Productions", items = 3, index = 0)
-                InfoRow(Icons.Filled.Memory, "El motor", "OpenGMK, reimplementacion en Rust", items = 3, index = 1)
-                InfoRow(Icons.Filled.Favorite, "Este port", "Comunidad, sin animo de lucro", items = 3, index = 2)
+            SettingsGroup("Who made it") {
+                InfoRow(Icons.Filled.Person, "The game", "Fer Productions", items = 3, index = 0)
+                InfoRow(Icons.Filled.Memory, "The engine", "OpenGMK, a Rust reimplementation", items = 3, index = 1)
+                InfoRow(Icons.Filled.Favorite, "This port", "Community, non-profit", items = 3, index = 2)
             }
 
-            SettingsGroup("Licencias y avisos") {
-                InfoRow(Icons.Filled.Brush, "Tipografia", "Google Sans Flex, bajo licencia OFL", items = 2, index = 0)
+            SettingsGroup("Licenses and notices") {
+                InfoRow(Icons.Filled.Brush, "Typeface", "Google Sans Flex, under the OFL license", items = 2, index = 0)
                 InfoRow(
                     icon = Icons.Filled.Memory,
-                    title = "Marcas",
-                    value = "Pokemon es de Nintendo, Game Freak y Creatures. Este proyecto no esta afiliado ni respaldado por ellos.",
+                    title = "Trademarks",
+                    value = "Pokemon is owned by Nintendo, Game Freak, and Creatures. This project is not affiliated with or endorsed by them.",
                     items = 2,
                     index = 1,
                 )
@@ -80,7 +80,7 @@ fun AboutScreen(onBack: () -> Unit) {
                     runCatching {
                         val info = context.packageManager.getPackageInfo(context.packageName, 0)
                         "${info.versionName} (${info.versionCode})"
-                    }.getOrDefault("desconocida")
+                    }.getOrDefault("unknown")
                 }
                 InfoRow(Icons.Filled.Memory, "Launcher", version, items = 1, index = 0)
             }

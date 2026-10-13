@@ -45,7 +45,7 @@ import java.io.File
 fun LogScreen(repo: GameRepository, bottomBar: @Composable () -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var text by remember { mutableStateOf("Cargando...") }
+    var text by remember { mutableStateOf("Loading...") }
     var nonce by remember { mutableStateOf(0) }
 
     LaunchedEffect(nonce) {
@@ -57,7 +57,7 @@ fun LogScreen(repo: GameRepository, bottomBar: @Composable () -> Unit = {}) {
             TopAppBar(
                 title = { Text("Logs") },
                 actions = {
-                    IconButton(onClick = { nonce++ }) { Icon(Icons.Filled.Refresh, contentDescription = "Actualizar") }
+                    IconButton(onClick = { nonce++ }) { Icon(Icons.Filled.Refresh, contentDescription = "Refresh") }
                     IconButton(onClick = {
                         // A file, not a wall of text: whoever reports a bug can attach it, and it
                         // keeps the whole thing instead of whatever fits in a message.
@@ -70,8 +70,8 @@ fun LogScreen(repo: GameRepository, bottomBar: @Composable () -> Unit = {}) {
                                 .putExtra(Intent.EXTRA_STREAM, uri)
                                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }.getOrNull() ?: Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
-                        context.startActivity(Intent.createChooser(sent, "Compartir logs"))
-                    }) { Icon(Icons.Filled.Share, contentDescription = "Compartir") }
+                        context.startActivity(Intent.createChooser(sent, "Share logs"))
+                    }) { Icon(Icons.Filled.Share, contentDescription = "Share") }
                 },
             )
         },
@@ -105,11 +105,11 @@ private fun readLog(repo: GameRepository): String {
         val kept = runCatching {
             File(repo.logFile.parentFile, "app.log").readText().takeLast(32_000)
         }.getOrNull()
-        return if (kept.isNullOrBlank()) logcat else "$logcat\n\n--- de antes de reiniciar ---\n$kept"
+        return if (kept.isNullOrBlank()) logcat else "$logcat\n\n--- from before restart ---\n$kept"
     }
 
     val file = repo.logFile
-    if (!file.isFile) return "Todavía no hay logs. Juega una vez para generarlos."
-    val text = runCatching { file.readText() }.getOrNull() ?: return "No pude leer los logs."
+    if (!file.isFile) return "No logs yet. Play once to generate them."
+    val text = runCatching { file.readText() }.getOrNull() ?: return "Couldn't read the logs."
     return if (text.length > 64_000) "...\n" + text.takeLast(64_000) else text
 }

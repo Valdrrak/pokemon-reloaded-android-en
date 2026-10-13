@@ -118,9 +118,9 @@ fun ControlsScreen(prefs: Preferences, filesDir: File, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Controles") },
+                title = { Text("Controls") },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver") }
+                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
                 },
             )
         },
@@ -129,26 +129,26 @@ fun ControlsScreen(prefs: Preferences, filesDir: File, onBack: () -> Unit) {
             modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            SettingsGroup("Mando", modifier = Modifier.padding(horizontal = 16.dp)) {
+            SettingsGroup("Controller", modifier = Modifier.padding(horizontal = 16.dp)) {
                 InfoRow(
                     icon = Icons.Filled.SportsEsports,
-                    title = "Estado",
-                    value = if (pads.isEmpty()) "Sin mando conectado" else pads.joinToString(", "),
+                    title = "Status",
+                    value = if (pads.isEmpty()) "No controller connected" else pads.joinToString(", "),
                     items = 1,
                     index = 0,
                 )
             }
 
-            SettingsGroup("Probar", modifier = Modifier.padding(horizontal = 16.dp)) {
+            SettingsGroup("Test input", modifier = Modifier.padding(horizontal = 16.dp)) {
                 InfoRow(
                     icon = Icons.Filled.SportsEsports,
-                    title = capturing?.let { "Pulsa el boton para la tecla ${it.key}" } ?: "Ultimo boton pulsado",
+                    title = capturing?.let { "Press the button for key ${it.key}" } ?: "Last button pressed",
                     value = when {
-                        lastCode == null -> "Pulsa algo en el mando; aqui dira que tecla dispara"
+                        lastCode == null -> "Press a controller button to see which key it triggers"
                         else -> {
                             val action = actionFor(bindings, lastCode!!)
                             val name = buttonName(lastCode!!)
-                            if (action == null) "$name - sin asignar" else "$name -> tecla ${action.key}"
+                            if (action == null) "$name - unassigned" else "$name -> key ${action.key}"
                         }
                     },
                     items = 1,
@@ -171,7 +171,7 @@ fun ControlsScreen(prefs: Preferences, filesDir: File, onBack: () -> Unit) {
                     },
                 )
                 if (capturing != null) {
-                    TextButton(onClick = { capturing = null }) { Text("Cancelar el cambio") }
+                    TextButton(onClick = { capturing = null }) { Text("Cancel remapping") }
                 }
                 val (stickX, stickY) = stickReadout
                 if (stick && (stickX != 0f || stickY != 0f)) {
@@ -182,12 +182,12 @@ fun ControlsScreen(prefs: Preferences, filesDir: File, onBack: () -> Unit) {
                 }
             }
 
-            SettingsGroup("Botones", modifier = Modifier.padding(horizontal = 16.dp)) {
+            SettingsGroup("Buttons", modifier = Modifier.padding(horizontal = 16.dp)) {
                 ControlAction.entries.forEachIndexed { index, action ->
                     val code = bindings[action] ?: action.defaultCode
                     NavRow(
                         icon = Icons.Filled.SportsEsports,
-                        title = "Tecla ${action.key}",
+                        title = "Key ${action.key}",
                         subtitle = listOfNotNull(
                             buttonName(code),
                             action.hint.takeIf { it.isNotEmpty() },
@@ -199,11 +199,11 @@ fun ControlsScreen(prefs: Preferences, filesDir: File, onBack: () -> Unit) {
                 }
             }
 
-            SettingsGroup("Stick", modifier = Modifier.padding(horizontal = 16.dp)) {
+            SettingsGroup("Analog stick", modifier = Modifier.padding(horizontal = 16.dp)) {
                 SwitchRow(
                     icon = Icons.Filled.SportsEsports,
-                    title = "Mover con el stick",
-                    subtitle = "El stick izquierdo anda y navega, con la misma zona muerta que el tactil",
+                    title = "Move with the stick",
+                    subtitle = "Use the left stick to move and navigate, with the same dead zone as touch controls",
                     checked = stick,
                     items = 1,
                     index = 0,
@@ -215,7 +215,7 @@ fun ControlsScreen(prefs: Preferences, filesDir: File, onBack: () -> Unit) {
                 TextButton(onClick = { store(emptyMap(), true) }) {
                     Icon(Icons.Filled.RestartAlt, contentDescription = null)
                     androidx.compose.foundation.layout.Spacer(Modifier.width(8.dp))
-                    Text("Restaurar los botones por defecto")
+                    Text("Restore default button mappings")
                 }
             }
         }

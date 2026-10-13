@@ -77,57 +77,54 @@ fun Onboarding(
         0 -> OnboardingScaffold(
             step = 0,
             stepCount = 3,
-            title = "Pokemon Reloaded en Android",
+            title = "Pokemon Reloaded for Android",
             subtitle = buildAnnotatedString {
                 append(
-                    "Un port hecho por la comunidad y para la comunidad, por @kliseex. Corre sobre " +
-                        "OpenGMK, una reimplementación nativa del motor de Game Maker 8, así que el " +
-                        "juego se ejecuta de verdad: no hay ningún Windows emulado por medio y el " +
-                        "rendimiento es prácticamente el de un juego nativo.\n\n" +
-                        "Sigue en beta, y eso se nota: PUEDE TENER MUCHOS ERRORES Y FALLOS. Si tienes " +
-                        "algún bug, mínimo o grave, por favor guarda un log y repórtalo.\n\n" +
-                        "Manda reportes de bugs, crasheos o congelamientos a ",
+                    "A community-made port by @kliseex, built for the community. It runs on " +
+                        "OpenGMK, a native reimplementation of the Game Maker 8 engine, so the game " +
+                        "runs directly without emulated Windows and performs much like a native game.\n\n" +
+                        "This is still a beta, and it may contain bugs or crash. If you run into any " +
+                        "issue, please save and share a log.\n\n" +
+                        "Report bugs, crashes, or freezes at ",
                 )
                 withLink(LinkAnnotation.Url("https://github.com/Klisee/pokemon-reloaded-android")) {
                     append("GitHub")
                 }
                 append(".")
             },
-            continueLabel = "Empezar",
+            continueLabel = "Get started",
             continueEnabled = true,
             onContinue = { step = 1 },
-            hero = { OnboardingHero("BIENVENIDO") },
+            hero = { OnboardingHero("WELCOME") },
         )
 
         1 -> OnboardingScaffold(
             step = 1,
             stepCount = 3,
-            title = "Antes de empezar",
+            title = "Before you start",
             subtitle = buildAnnotatedString {
                 append(
-                    "Para poder jugar a este port en Android necesitas los archivos originales del " +
-                        "juego, que están en el blog de ",
+                    "To play this Android port, you need the original game files from ",
                 )
                 withLink(LinkAnnotation.Url("https://pokemon-reloaded.blogspot.com/")) {
                     append("F3R")
                 }
                 append(
-                    ". Este APK no trae ningún asset del juego, y eso es lo que mantiene el proyecto " +
-                        "del código abierto.\n\n" +
-                        "Para empezar: dale a Descargar del blog, consigue el juego en un .zip y " +
-                        "después usa Importar un zip.",
+                    ". This APK does not include game assets, which keeps the project open source.\n\n" +
+                        "To get started, open the blog's download page, get the game as a .zip, then " +
+                        "choose Import ZIP.",
                 )
             },
-            continueLabel = "Continuar",
+            continueLabel = "Continue",
             continueEnabled = installed != null,
             onContinue = { step = 2 },
             onBack = { step = 0 },
-            hint = if (installed == null) "Instala el juego para poder continuar" else "Listo: ${installed.exe}",
+            hint = if (installed == null) "Install the game to continue" else "Ready: ${installed.exe}",
         ) {
             BigActionRow(
                 icon = Icons.Filled.Download,
-                title = "Descargar del blog",
-                subtitle = if (postVersion != null) "Version $postVersion" else "Abre la pagina de descarga",
+                title = "Download from the blog",
+                subtitle = if (postVersion != null) "Version $postVersion" else "Open the download page",
                 items = 2,
                 index = 0,
                 enabled = downloadUrl != null && !busy,
@@ -135,8 +132,8 @@ fun Onboarding(
             )
             BigActionRow(
                 icon = Icons.Filled.FolderOpen,
-                title = "Importar un zip",
-                subtitle = "Elige el archivo que ya tengas",
+                title = "Import a ZIP",
+                subtitle = "Choose an existing file",
                 items = 2,
                 index = 1,
                 enabled = !busy,
@@ -150,17 +147,17 @@ fun Onboarding(
         else -> OnboardingScaffold(
             step = 2,
             stepCount = 3,
-            title = "Como quieres jugar",
-            subtitle = AnnotatedString("Puedes cambiarlo cuando quieras desde Ajustes."),
-            continueLabel = "Listo",
+            title = "How would you like to play?",
+            subtitle = AnnotatedString("You can change this anytime in Settings."),
+            continueLabel = "Done",
             continueEnabled = true,
             onContinue = { finish() },
             onBack = { step = 1 },
         ) {
             SwitchRow(
                 icon = Icons.Filled.LightMode,
-                title = "Mantener la pantalla encendida",
-                subtitle = "Evita que el movil se bloquee durante una batalla larga",
+                title = "Keep screen on",
+                subtitle = "Prevent your phone from locking during a long battle",
                 checked = keepScreenOn,
                 items = 1,
                 index = 0,
@@ -170,7 +167,7 @@ fun Onboarding(
                 },
             )
             Text(
-                text = "Los controles tactiles aparecen solos: joystick y botones en el mundo y en combate, y ninguno en los menus, que se tocan directamente.",
+                text = "Touch controls appear automatically: a joystick and buttons in the overworld and in battle, and none in menus, which you can tap directly.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

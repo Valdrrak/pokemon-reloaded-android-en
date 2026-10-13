@@ -10,7 +10,7 @@ import java.io.File
  */
 fun writeVideoFile(filesDir: File, keepAspect: Boolean) {
     val text = buildString {
-        appendLine("# Escrito por Ajustes. El emulador lo lee al arrancar.")
+        appendLine("# Written by Settings. The emulator reads it at startup.")
         appendLine("scaling=${if (keepAspect) "aspect" else "full"}")
     }
     runCatching { File(filesDir, "video.conf").writeText(text) }

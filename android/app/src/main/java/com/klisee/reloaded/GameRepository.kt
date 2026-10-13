@@ -133,7 +133,7 @@ class GameRepository(private val context: Context) {
     suspend fun importSlot(uri: Uri, index: Int): Result<Int> = withContext(Dispatchers.IO) {
         runCatching {
             val folder = File(gameDir, "data/partidas")
-            if (!folder.isDirectory) error("Primero instala el juego.")
+            if (!folder.isDirectory) error("Install the game first.")
             val numbered = Regex("^reloaded\\d+(\\.|_)(.*)$", RegexOption.IGNORE_CASE)
             var written = 0
             context.contentResolver.openInputStream(uri)?.use { input ->
@@ -155,7 +155,7 @@ class GameRepository(private val context: Context) {
                     }
                 }
             }
-            if (written == 0) error("Ese zip no trae ninguna partida.")
+            if (written == 0) error("That zip doesn't contain any save.")
             written
         }
     }
@@ -170,7 +170,7 @@ class GameRepository(private val context: Context) {
             val folder = File(gameDir, "data/partidas")
             val files = folder.listFiles().orEmpty()
                 .filter { it.name.startsWith("reloaded$index.") || it.name.startsWith("reloaded${index}_") }
-            if (files.isEmpty()) error("Esa partida ya no esta.")
+            if (files.isEmpty()) error("That save no longer exists.")
             files.forEach { it.delete() }
         }
     }
@@ -180,7 +180,7 @@ class GameRepository(private val context: Context) {
         runCatching {
             val folder = File(gameDir, "data/partidas")
             val files = folder.listFiles().orEmpty().filter { it.name.startsWith("reloaded$index.") }
-            if (files.isEmpty()) error("Esa partida esta vacia.")
+            if (files.isEmpty()) error("That save is empty.")
             val out = File(context.cacheDir, "partida$index.zip")
             ZipOutputStream(out.outputStream().buffered()).use { zip ->
                 files.forEach { file ->
@@ -213,7 +213,7 @@ class GameRepository(private val context: Context) {
             }
             if (written == 0) {
                 out.delete()
-                error("No hay partidas que exportar todavia.")
+                error("No saves to export yet.")
             }
             out
         }
@@ -223,7 +223,7 @@ class GameRepository(private val context: Context) {
     suspend fun importSaves(uri: Uri): Result<Int> = withContext(Dispatchers.IO) {
         runCatching {
             val data = File(gameDir, "data")
-            if (!data.isDirectory) error("Primero instala el juego.")
+            if (!data.isDirectory) error("Install the game first.")
             var files = 0
             // A save is a .savc file; the .data and .nfo beside it only describe it. Counting every
             // file in the zip said "51 partidas" when there was really one.
@@ -252,8 +252,8 @@ class GameRepository(private val context: Context) {
                         entry = zip.nextEntry
                     }
                 }
-            } ?: error("No pude abrir el archivo.")
-            if (files == 0) error("Ese zip no trae partidas del juego.")
+            } ?: error("Couldn't open the file.")
+            if (files == 0) error("That zip doesn't contain any game saves.")
             saves
         }
     }
@@ -333,17 +333,17 @@ class GameRepository(private val context: Context) {
                             if (expected > 0) onProgress(((copied * 100) / expected).toInt().coerceIn(0, 99))
                         }
                     }
-                } ?: error("No pude abrir el fichero elegido.")
+                } ?: error("Couldn't open the chosen file.")
                 val size = dest.length()
-                if (size == 0L) error("La copia vino vacia.")
-                if (expected > 0 && size != expected) error("Copia incompleta: $size de $expected bytes.")
+                if (size == 0L) error("The copy came back empty.")
+                if (expected > 0 && size != expected) error("Incomplete copy: $size of $expected bytes.")
                 return
             } catch (e: Throwable) {
                 last = e
                 trace("import: intento $attempt de copiar fallo (${e.message}); reintentando")
             }
         }
-        throw last ?: error("No pude copiar el zip.")
+        throw last ?: error("Couldn't copy the zip.")
     }
 
     /** The size the content provider advertises for a document, or -1 if it does not say. */
@@ -366,7 +366,7 @@ class GameRepository(private val context: Context) {
                     if (!cookies.isNullOrEmpty()) setRequestProperty("Cookie", cookies)
                 }
                 connection.connect()
-                if (connection.responseCode !in 200..299) error("El servidor respondio ${connection.responseCode}.")
+                if (connection.responseCode !in 200..299) error("The server responded ${connection.responseCode}.")
                 val total = connection.contentLengthLong.takeIf { it > 0 } ?: -1L
                 connection.inputStream.use { input ->
                     temp.outputStream().use { output ->
@@ -408,7 +408,7 @@ class GameRepository(private val context: Context) {
                 val target = File(staging, entry.name)
                 // Reject zip-slip: entries must stay inside the staging directory.
                 if (!target.canonicalPath.startsWith(staging.canonicalPath + File.separator)) {
-                    error("El zip tiene una ruta no valida: ${entry.name}")
+                    error("The zip has an invalid path: ${entry.name}")
                 }
                 if (entry.isDirectory) {
                     target.mkdirs()
@@ -444,13 +444,13 @@ class GameRepository(private val context: Context) {
             !File(staging, "data").isDirectory
         ) {
             staging.deleteRecursively()
-            error("El zip no trae el .exe y la carpeta data/.")
+            error("The zip doesn't contain the .exe and the data/ folder.")
         }
 
         gameDir.deleteRecursively()
         if (!staging.renameTo(gameDir)) {
             staging.deleteRecursively()
-            error("No pude mover el juego a su carpeta definitiva.")
+            error("Couldn't move the game to its final folder.")
         }
         metaFile.writeText(
             JSONObject()
@@ -483,7 +483,7 @@ class GameRepository(private val context: Context) {
             trace("import: exe=$exe data=$data; empieza por: $first")
             // Only a sanity check. The layout is settled once the zip is unpacked, because a zip
             // made by right-clicking the game folder keeps everything one level down.
-            if (!exe || !data) error("Ese zip no parece Pokemon Reloaded: no encuentro el .exe ni la carpeta data/.")
+            if (!exe || !data) error("That zip doesn't look like Pokemon Reloaded: can't find the .exe or the data/ folder.")
         }
     }
 
